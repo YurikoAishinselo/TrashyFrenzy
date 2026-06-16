@@ -5,9 +5,10 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     public float maxSpeed = 13f;
-    public float acceleration = 30f;
+    public float acceleration = 40f;
     public float drag = 10f;
     Vector2 playerVelocity;
+    public bool inputLocked = false;
     Vector2 externalForce;
 
     [Header("Rotation")]
@@ -18,6 +19,10 @@ public class PlayerController : MonoBehaviour
     public float mouseSensitivity = 1.2f;
     PlayerInputActions input;
     bool isPressing;
+
+
+    [Header("Mobile")]
+    public float joystickSensitivity = 4f;
 
 
     // Mouse / Trackpad
@@ -94,6 +99,9 @@ public class PlayerController : MonoBehaviour
     // ---------------- INPUT ----------------
     void HandleInput()
     {
+        if (inputLocked)
+            return;
+
         Vector2 inputVector = GetMovementInput(out bool isActive);
         if (!isActive || inputVector.sqrMagnitude < 0.01f)
             return;
@@ -108,7 +116,7 @@ public class PlayerController : MonoBehaviour
             Vector2 dir = inputVector.normalized;
             float strength = Mathf.Clamp01(inputVector.magnitude);
 
-            playerVelocity += dir * currentAccel * strength * Time.deltaTime;
+            playerVelocity += dir * currentAccel * strength * joystickSensitivity * Time.deltaTime;
         }
         else
         {
